@@ -81,6 +81,7 @@ func main() {
 | excludesall=chars | 不能包含 chars 中的任何字符     |
 | excludes=X        | 不能包含 X 子串                 |
 | isdefault         | 必须是字段类型的默认值          |
+| dive              | 用于切片或者map的验证           |
 
 ## 5. 自定义验证
 
@@ -120,11 +121,11 @@ type Address struct {
 type Person struct {
 	Name    string  `validate:"required"`
 	Age     int     `validate:"gte=18"`
-	Address Address `validate:"dive"`
+	Address Address `validate:"required"`
 }
 ```
 
-`dive` 关键字表示深入到嵌套结构体中进行验证。
+`required` 关键字表示深入到嵌套结构体中进行验证。
 
 ## 7. 处理错误信息
 
