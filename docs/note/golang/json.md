@@ -35,7 +35,7 @@ func main() {
 | 无需额外依赖         | 性能相对较低               |
 | 适用于简单 JSON 解析 | 解析大 JSON 结构时性能不足 |
 
-------
+***
 
 ## 2. 第三方 JSON 解析库
 
@@ -59,9 +59,18 @@ import (
 
 func main() {
 	jsonData := `{"name": "Alice", "age": 25}`
-	name := gjson.Get(jsonData, "name").String()
+	if !gjson.Valid(jsonData) {
+		fmt.Println("Invalid JSON data")
+		return
+	}
+	if gjson.Get(jsonData, "name").Exists() {
+		fmt.Println("Name field exists")
+	} else {
+		fmt.Println("Name field does not exist")
+	}
+	name := gjson.Get(jsonData, "name")
 	age := gjson.Get(jsonData, "age").Int()
-	fmt.Println("Name:", name)
+	fmt.Println("Name:", name.String())
 	fmt.Println("Age:", age)
 }
 ```
@@ -74,7 +83,7 @@ func main() {
 | 支持 JSONPath 查询 | 适用于只读场景 |
 | 代码简洁           | -              |
 
-------
+***
 
 ### **2.2 `github.com/json-iterator/go`（高性能 JSON 解析）**
 
@@ -111,7 +120,7 @@ func main() {
 | 兼容 `encoding/json`，可直接替换 | 解析 JSON 数组不如 `gjson` 简洁 |
 | 性能比 `encoding/json` 高        | -                               |
 
-------
+***
 
 ### **2.3 `github.com/buger/jsonparser`（流式 JSON 解析）**
 
@@ -147,7 +156,7 @@ func main() {
 | 适用于大 JSON 文件解析    | 不能修改 JSON       |
 | 直接操作 `[]byte`，性能高 | 代码较 `gjson` 复杂 |
 
-------
+***
 
 ## 3. JSON 解析库对比
 
@@ -158,13 +167,13 @@ func main() {
 | `json-iterator/go` | 高性能 JSON 解析 | 可直接替换标准库            | 解析 JSON 数组较繁琐       |
 | `buger/jsonparser` | 解析大 JSON      | 直接操作 `[]byte`，流式解析 | 代码较复杂                 |
 
-------
+***
 
 ## **总结与推荐**
 
-- **只读取 JSON 数据**（不修改）：✅ `gjson`
-- **需要高性能 JSON 解析**：✅ `json-iterator/go`
-- **解析大 JSON 文件**（如日志）：✅ `buger/jsonparser`
-- **通用解析（兼容性好）**：✅ `encoding/json`
+*   **只读取 JSON 数据**（不修改）：✅ `gjson`
+*   **需要高性能 JSON 解析**：✅ `json-iterator/go`
+*   **解析大 JSON 文件**（如日志）：✅ `buger/jsonparser`
+*   **通用解析（兼容性好）**：✅ `encoding/json`
 
 根据具体需求选择合适的库，以提高 JSON 处理效率。
