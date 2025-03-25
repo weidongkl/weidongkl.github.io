@@ -103,8 +103,36 @@ if err == nil && cost < bcrypt.DefaultCost {
 	fmt.Println("Password hash is outdated, consider updating")
 }
 ```
+**监测哈希成本并升级**
 
-------
+如果 `bcrypt.Cost` 返回的值小于当前推荐值（如 `12`），则需要重新哈希密码：
+
+```go
+const recommendedCost = 12
+
+func upgradePasswordHash(storedHash string, password string) string {
+	cost, err := bcrypt.Cost([]byte(storedHash))
+	if err != nil {
+		fmt.Println("Error getting cost:", err)
+		return storedHash
+	}
+
+	// 如果成本因子过低，则重新生成哈希
+	if cost < recommendedCost {
+		newHash, err := bcrypt.GenerateFromPassword([]byte(password), recommendedCost)
+		if err != nil {
+			fmt.Println("Error upgrading hash:", err)
+			return storedHash
+		}
+		fmt.Println("Password hash upgraded.")
+		return string(newHash)
+	}
+
+	return storedHash
+}
+```
+
+
 
 ## 4. 适用场景
 
