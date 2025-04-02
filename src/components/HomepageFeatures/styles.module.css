@@ -6,12 +6,15 @@
 }
 
 .featureSvg {
-  height: 200px;
-  width: 200px;
+  margin-bottom: 1rem;
+  position: center;
+
+  /*height: 200px;*/
+  /*width: 200px;*/
 }
 
 .buttons {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /*align-items: center;*/
+  /*justify-content: center;*/
 }
