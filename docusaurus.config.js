@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Weidong Github Site',
+  title: 'Weidong Note',
   tagline: '魏东也太帅了吧！',
   favicon: 'img/favicon.ico',
 
@@ -99,7 +99,7 @@ const config = {
           src: 'img/logo.svg',
         },
         // 下滑时，隐藏顶部的导航栏，上划自动显示
-        hideOnScroll: true,
+        //hideOnScroll: true,
         items: [
           {
             type: 'docSidebar',
