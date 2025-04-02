@@ -58,9 +58,9 @@ const config = {
           },
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
+          // editUrl:
+          //   'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -101,6 +101,12 @@ const config = {
         // 下滑时，隐藏顶部的导航栏，上划自动显示
         hideOnScroll: true,
         items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'note',
+            position: 'right',
+            label: '笔记',
+          },
           { to: '/blog',
             label: '博客',
             position: 'right'
@@ -117,13 +123,13 @@ const config = {
             type: 'dropdown',
             sidebarId: 'note1',
             position: 'right',
-            label: '笔记',
+            label: '仓库',
             items: [
-              {
-                type: 'docSidebar',
-                label: '学习文档',
-                sidebarId: 'note',
-              },
+              // {
+              //   type: 'docSidebar',
+              //   label: '学习文档',
+              //   sidebarId: 'note',
+              // },
               {
                 label: 'Gitee',
                 href: 'https://gitee.com/weidongkl',
