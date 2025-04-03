@@ -1,8 +1,8 @@
 {
-  "label": "golang",
+  "label": "Golang",
   "position": 1,
   "link": {
     "type": "generated-index",
-    "description": "golang 文档"
-  },
+    "description": "golang 用法笔记"
+  }
 }

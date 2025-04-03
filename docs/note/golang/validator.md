@@ -1,4 +1,4 @@
-# Go Validator
+# Golang Validator
 
 ## 1. 简介
 
