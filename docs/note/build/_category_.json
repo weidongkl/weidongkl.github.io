@@ -1,7 +1,8 @@
 {
-  "label": "build",
+  "label": "Build",
   "position": 2,
   "link": {
-    "type": "generated-index"
+    "type": "generated-index",
+    "description": "编译构建相关笔记"
   }
 }

@@ -1,4 +1,4 @@
-# `os/exec` 用法
+# Golang `os/exec` 用法
 
 ## 1. `os/exec` 包简介
 

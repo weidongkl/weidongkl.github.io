@@ -1,0 +1,8 @@
+{
+  "label": "golang程序设计",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "记录一些不错的golang程序设计方法"
+  }
+}
