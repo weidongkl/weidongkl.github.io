@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="atom.xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>http://weidongkl.github.io/blog</id>
+    <title>Weidong Note Blog</title>
+    <updated>2025-02-22T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="http://weidongkl.github.io/blog"/>
+    <subtitle>Weidong Note Blog</subtitle>
+    <icon>http://weidongkl.github.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[南明史]]></title>
+        <id>http://weidongkl.github.io/blog/南明史</id>
+        <link href="http://weidongkl.github.io/blog/南明史"/>
+        <updated>2025-02-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[历史书如同一面哈哈镜，常常放大特定利益阶层的功绩，却忽视或淡化了平凡人的力量与贡献。]]></summary>
+        <content type="html"><![CDATA[<p>历史书如同一面哈哈镜，常常放大特定利益阶层的功绩，却忽视或淡化了平凡人的力量与贡献。</p>
+<p><img decoding="async" loading="lazy" alt="wd" src="http://weidongkl.github.io/assets/images/%E5%8D%97%E6%98%8E%E5%8F%B2-3708bc2d593d2669baa76f5a6db0ef20.png" width="405" height="614" class="img_ev3q"></p>
+<p>从《活着》中的普通人到李自成的大顺军，一再证明，平凡个体同样可以成就伟大。明代初年，名将多出自淮西，但若将他们置于一个稳定的时代，他们或许只是普通的农民或奴隶；若将他们放在不同的阵营，他们可能只是他人辉煌的背景。我们通常将伟大定义为时代赋予的成功与名声，但这种定义或许过于狭隘。伟大不应仅限于功成名就，而应更加包容和务实，更贴近人类共同的经验。勇敢、智慧，甚至失败，都值得被赋予伟大的意义。伟大存在于每个个体为生存、理想和信念所付出的努力中，无论成败。</p>]]></content>
+        <author>
+            <name>weidongkl</name>
+            <uri>https://github.com/weidongkl</uri>
+        </author>
+        <category label="Hello" term="Hello"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[一句顶一万句]]></title>
+        <id>http://weidongkl.github.io/blog/一句顶一万句</id>
+        <link href="http://weidongkl.github.io/blog/一句顶一万句"/>
+        <updated>2025-02-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[能说的上话很重要。]]></summary>
+        <content type="html"><![CDATA[<p>能说的上话很重要。</p>
+<p><img decoding="async" loading="lazy" alt="wd" src="http://weidongkl.github.io/assets/images/%E4%B8%80%E5%8F%A5-2ed7d66d03095f6b46345d7d3089bef9.jpg" width="3024" height="4032" class="img_ev3q">
+<strong>能说的上话很重要。</strong></p>]]></content>
+        <author>
+            <name>weidongkl</name>
+            <uri>https://github.com/weidongkl</uri>
+        </author>
+        <category label="Hello" term="Hello"/>
+    </entry>
+</feed>
