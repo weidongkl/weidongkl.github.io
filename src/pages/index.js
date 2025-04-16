@@ -34,7 +34,7 @@ export default function Home() {
       // title={`Hello from ${siteConfig.title}`}
       title='Weidong'
       description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
+      {/*<HomepageHeader />*/}
       <main>
         <HomepageFeatures />
       </main>
