@@ -13,20 +13,34 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
       - name: Install dependencies
         run: npm install
+
       - name: Build website
-        run: npm run build
-        
+        run: |
+          npm run build
+          echo "Build at $(date)" > build/deploy-info.txt
+
+      - name: Debug build output
+        run: |
+          ls -alh build
+          du -sh build
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: docs-deploy
           publish_dir: ./build
+          commit_message: "deploy: ${{ github.sha }} at ${{ env.BUILD_TIME }}"

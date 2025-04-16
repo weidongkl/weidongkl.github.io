@@ -1,16 +1,17 @@
 .features {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  /*padding: 2rem 0;*/
   width: 100%;
 }
 
 .featureSvg {
-  margin-bottom: 1rem;
-  position: center;
-
-  /*height: 200px;*/
-  /*width: 200px;*/
+  display: block;
+  width: 70%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto; /* 水平居中 */
 }
 
 .buttons {
@@ -18,3 +19,38 @@
   /*align-items: center;*/
   /*justify-content: center;*/
 }
+
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* 保证左右两边内容均匀宽度 */
+.imageSection,
+.textSection {
+  flex: 1 1 50%;
+  /*display: flex;*/
+  justify-content: center;
+  align-items: center;
+  /*padding: 1rem;*/
+}
+
+/* 响应式：移动端改为列方向 */
+@media (max-width: 768px) {
+  .flexContainer {
+    flex-direction: column;
+  }
+  .featureSvg {
+    width: 100%;
+  }
+
+  .imageSection,
+  .textSection {
+    flex: 1 1 100%;
+  }
+}
+
