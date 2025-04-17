@@ -35,7 +35,20 @@ const config = {
     defaultLocale: 'zh-Hans',
     locales: ['en', 'zh-Hans'],
   },
-
+  plugins: [
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        // 配置选项（同旧版插件）
+        indexDocs: true,
+        indexBlog: true,
+        language: 'zh', // 支持 'zh' 等语言
+        hashed: true,   // 提升中文搜索效果
+        searchBarShortcut: false,
+        searchBarPosition: "left",
+      },
+    ],
+  ],
   presets: [
     [
       'classic',
@@ -101,6 +114,11 @@ const config = {
         // 下滑时，隐藏顶部的导航栏，上划自动显示
         //hideOnScroll: true,
         items: [
+          // {
+          //   type: 'search',
+          //   position: 'right', // 'left' 或 'right'（默认）
+          //   className: 'custom-search-bar', // (可选) 自定义 CSS 类
+          // },
           {
             type: 'docSidebar',
             sidebarId: 'note',
@@ -161,6 +179,8 @@ const config = {
           },
         ],
       },
+      algolia: false, // 如果之前配置过 Algolia，需关闭
+      search: undefined,
       footer: {
         style: 'dark',
         links: [
