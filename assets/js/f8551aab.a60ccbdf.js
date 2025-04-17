@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkweidongkl_github_io=self.webpackChunkweidongkl_github_io||[]).push([[2224],{4575:(e,i,s)=>{s.r(i),s.d(i,{default:()=>a});s(6540);var h=s(4064),n=s(4848);function a(){return(0,n.jsxs)(h.A,{children:[(0,n.jsx)("h1",{children:"My React page"}),(0,n.jsx)("p",{children:"This is a React page"})]})}}}]);
