@@ -21,34 +21,27 @@ yum install gdb
 ```
 
 ### 2.2 源码编译安装
-（详细编译安装步骤）
+（TODO：添加源码编译详细步骤）
 
 ## 3. GDB 基本功能
 
 ### 3.1 启动GDB
 ```bash
-# 启动gdb调试程序
-$ gdb <your_program>
-# 开始程序运行。`run`后面的参数会像进程正常执行一样传递给进程。通常，我们会在设置好断点之后。执行此命令
-$ run
+# 启动 GDB 调试指定程序
+$ gdb <your_program>  
+# 启动程序执行 `run`后面的参数会像进程正常执行一样传递给进程。通常，我们会在设置好断点之后。执行此命令
+(gdb) run             
 ```
 
 ### 3.2 调试带参数的程序
-#### 方法1：直接传递参数
 ```bash
-(gdb) run arg1 arg2 arg3
-```
-
-#### 方法2：使用set args
-```bash
-(gdb) set args arg1 arg2 arg3
+# 方法1：直接传参
+(gdb) run arg1 arg2 arg3              
+ # 方法2：预设参数
+(gdb) set args arg1 arg2 arg3         
 (gdb) run
-```
-
-#### 方法3：修改命令行参数
-```bash
-(gdb) set args new_arg1 new_arg2
-(gdb) run
+ # 方法3：修改参数
+(gdb) set args new_arg1 new_arg2      
 ```
 
 ### 3.3 调试运行中的进程
@@ -77,59 +70,50 @@ $ gdb -q
 | q/quit         | 退出gdb                |
 
 ### 3.5 断点管理
-#### 设置断点
-
 通过 `break` 命令在特定位置设置断点（如函数或代码行）。
 
 ```bash
-(gdb) break <function_name>
-(gdb) break <file_name>:<line_number>
+(gdb) break func_name                 # 设置函数断点
+(gdb) break file.c:line              # 设置文件行断点
+(gdb) break file:line if condition   # 条件断点
+(gdb) info breakpoints               # 查看断点信息
+(gdb) delete <num>                   # 删除指定断点
 ```
 
-#### 条件断点
+### 3.6 变量与内存操作
 ```bash
-(gdb) break file:line if condition
+(gdb) print var                      # 打印变量
+(gdb) info locals                   # 显示局部变量
+(gdb) info args                     # 显示函数参数
+(gdb) set var = value               # 修改变量值
+(gdb) x/10x <addr>                  # 查看内存内容（16进制）
 ```
 
-#### 命令断点
-
-```bash
-(gdb) break <function_name> command
-```
-
-#### 查看断点
-
-```bash
-(gdb) info breakpoints
-```
-
-#### 删除断点
-```bash
-(gdb) delete breakpoint_num
-```
-
-### 3.6 变量查看与修改
-#### 查看变量
-```bash
-(gdb) print <variable_name>
-# 查看当前函数的局部变量
-(gdb) info locals
-# 查看当前函数的参数
-(gdb) info args
-```
-
-#### 修改变量
-```bash
-(gdb) set variable=value
-```
-
-#### 查看内存
+### 3.7 寄存器操作
 
 ```bash
-(gdb) x/10x <memory_address>
+(gdb) info registers                 # 查看所有寄存器的值
+(gdb) print $eax                     # 查看特定寄存器（如 x86 架构）
+(gdb) p/x $eax                       # 十六进制显示寄存器值
+(gdb) set $eax = 0x10                # 修改寄存器值
+# 特殊寄存器
+(gdb) info registers float           # 浮点寄存器
+(gdb) info registers vector          # 向量寄存器
+(gdb) info registers eflags          # 标志寄存器
+(gdb) x/i $pc                        # 查看栈指针指向的内存
+(gdb) x/i $pc                        # 反汇编当前指令
+(gdb) stepi                          # 单步执行一条汇编指令
 ```
 
-#### 示例
+> 使用 `$<寄存器名>` 可以访问 CPU 寄存器；`$pc` 表示程序计数器，`$sp` 表示栈指针，`$fp` 为帧指针。
+>
+> 在GDB内部，`$pc` 实际上是一个宏，会根据当前调试目标的架构自动映射到正确的寄存器：
+>
+> - x86-64 → 映射到 `$rip`
+> - ARM → 映射到 `$r15` 或 `$pc`
+> - MIPS → 映射到 `$pc`
+
+**示例**
 
 ```bash
 $ # gdb -q  ./a.out 
@@ -180,6 +164,8 @@ Hello World
 
 ### 4.1 多进程调试
 ```bash
+# 使用 `info inferior` 命令查看当前程序中的所有进程。
+(gdb) info inferior
 # 使用 `inferior` 命令切换不同进程进行调试
 (gdb) inferior <process_id>
 # `follow-fork-mode` 参数用来设置gdb跟踪父进程还是子进程
@@ -190,7 +176,14 @@ Hello World
 (gdb) set detach-on-fork on/off
 ```
 
+> gdb 默认只会跟踪父进程。当断点处在子进程路径时，程序可能会直接执行结束退出。
+>
+> 此时，可以通过设置 `set follow-fork-mode child` 再执行 `run`运行调试。
+>
+> 也可以 `break fork` 断点到fork时。
+
 ### 4.2 多线程调试
+
 ```bash
 # 使用 `info threads` 命令查看当前程序中的所有线程。
 (gdb) info threads
