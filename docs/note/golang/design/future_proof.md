@@ -10,16 +10,122 @@
 
 ### 1.1.  松耦合（Loose Coupling）
 
-*   **目标**：模块间通过清晰的接口交互，而非直接依赖具体实现。
-*   **示例**：使用接口（Go 的 `interface`）而非具体类型，依赖注入而非硬编码。
+*   **目标**：模块间通过清晰的接口交互，而非直接依赖具体实现。使用接口（Go 的 `interface`）而非具体类型，依赖注入而非硬编码。
+*   **优点**：
+    1. 业务逻辑与具体实现解耦
+    2. 易于扩展新的实现方式
+    3. 便于单元测试（可以mock Notifier）
+*   **设计点：**
+    1. 面向接口编程：依赖抽象而非具体实现
+    2. 依赖注入：通过构造函数或方法参数注入依赖
+    3. 单一职责：每个组件只关注自己的核心功能
+    4. 最小知识原则：组件只与直接相关的组件交互
 
-```go
-type RuleStorage interface {
-    UpdateRules([]string) error
-    GetRules() []string
-}
-// 未来可替换不同的存储实现（数据库、内存、缓存等）
-```
+- **松耦合示例：**
+
+  1. 定义接口
+
+     ```go
+     // Notifier 通知接口
+     type Notifier interface {
+         Send(message string) error
+     }
+     ```
+
+  2. 接口实现
+
+     ```go
+     // EmailNotifier 邮件通知实现
+     type EmailNotifier struct{}
+     
+     func (e EmailNotifier) Send(message string) error {
+         fmt.Printf("发送邮件通知: %s\n", message)
+         return nil
+     }
+     
+     // SMSNotifier 短信通知实现
+     type SMSNotifier struct{}
+     
+     func (s SMSNotifier) Send(message string) error {
+         fmt.Printf("发送短信通知: %s\n", message)
+         return nil
+     }
+     ```
+
+  3. 业务逻辑调用接口
+
+     ```go
+     // NotificationService 通知服务
+     type NotificationService struct {
+         notifier Notifier
+     }
+     
+     func NewNotificationService(notifier Notifier) *NotificationService {
+         return &NotificationService{notifier: notifier}
+     }
+     
+     func (s *NotificationService) ProcessOrder(orderID string) {
+         // 处理订单逻辑...
+         message := fmt.Sprintf("订单 %s 已处理", orderID)
+         _ = s.notifier.Send(message)
+     }
+     ```
+
+  4. 主函数调用
+
+     ```go
+     func main() {
+         // 可以轻松替换通知实现
+         emailNotifier := EmailNotifier{}
+         service := NewNotificationService(emailNotifier)
+         service.ProcessOrder("12345")
+         
+         // 切换为短信通知不需要修改业务逻辑
+         smsNotifier := SMSNotifier{}
+         service = NewNotificationService(smsNotifier)
+         service.ProcessOrder("67890")
+     }
+     ```
+
+- **紧耦合示例：**
+
+  1. 使用具体类型
+
+     ```go
+     // EmailSender 邮件发送器
+     type EmailSender struct{}
+     
+     func (e EmailSender) SendEmail(message string) error {
+         fmt.Printf("发送邮件: %s\n", message)
+         return nil
+     }
+     ```
+
+  2. 业务类型依赖具体类
+
+     ```go
+     // OrderProcessor 订单处理器
+     type OrderProcessor struct {
+         emailSender EmailSender
+     }
+     
+     func (p *OrderProcessor) ProcessOrder(orderID string) {
+         // 处理订单逻辑...
+         message := fmt.Sprintf("订单 %s 已处理", orderID)
+         _ = p.emailSender.SendEmail(message)
+     }
+     ```
+
+  3. 主函数调用
+
+     ```go
+     func main() {
+         processor := OrderProcessor{emailSender: EmailSender{}}
+         processor.ProcessOrder("12345")
+         
+         // 如果要改为短信通知，必须修改OrderProcessor结构体和所有相关代码
+     }
+     ```
 
 ### 1.2. 可扩展性（Extensibility）
 
@@ -681,7 +787,7 @@ func main() {
 >        Command
 >        Priority int
 >    }
->    
+>          
 >    // Use priority queue instead of channel
 >    ```
 >
