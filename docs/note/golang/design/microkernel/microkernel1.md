@@ -8,14 +8,33 @@ microkernel（微内核）架构的核心思想是 **核心功能最小化**，�
 ---
 
 ## **1. 微内核核心设计**
-**核心组件**
-**Kernel（内核）**  
+### 1.1 特点
 
-1. - 负责 **服务注册、消息路由、生命周期管理**。
+1. **内核小、职责单一**  
+   内核只负责最基本的功能，比如线程调度、地址空间管理、IPC。
+
+2. **模块化、可扩展**  
+   文件系统、驱动程序等作为用户空间服务，易于替换和调试。
+
+3. **可靠性高**  
+   一个用户态服务崩溃不会影响整个系统。
+
+4. **通信开销大**  
+   模块间依赖消息传递，相比传统内核切换用户态和内核态的代价更大。
+
+### 1.2 核心组件
+
+1. **Kernel**（内核）
+
+   负责 **服务注册、消息路由、生命周期管理**。
+
 2. **Services（服务）**  
-   - 独立模块（如 `LogService`、`StorageService`），运行在用户态。
+   
+   独立模块（如 `LogService`、`StorageService`），运行在用户态。
+   
 3. **通信机制（IPC）**  
-   - 使用 Go 的 **Channel** 或 **gRPC** 进行通信。
+   
+   使用 Go 的 **Channel** 或 **gRPC** 进行通信。
 
 ---
 
@@ -262,4 +281,5 @@ func main() {
   - 简单场景：`Channel`（如示例）。
   - 复杂场景：`gRPC`、`NATS`、`WebSocket` 等。
 
-查看[完整代码]((https://gitee.com/weidongkl/weidongkl.github.io/blob/master/docs/note/golang/design/microkernel/microkernel1)
+查看[完整代码](https://gitee.com/weidongkl/weidongkl.github.io/blob/master/docs/note/golang/design/microkernel/microkernel1)
+
