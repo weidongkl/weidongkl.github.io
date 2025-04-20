@@ -37,6 +37,7 @@
   justify-content: center;
   align-items: center;
   /*padding: 1rem;*/
+  padding-bottom: 1rem;
 }
 
 /* 响应式：移动端改为列方向 */
@@ -48,9 +49,16 @@
     width: 100%;
   }
 
-  .imageSection,
+  .imageSection
+  {
+    flex: 1 1 100%;
+  }
+
   .textSection {
     flex: 1 1 100%;
+    /*手机访问时，避免两个对象紧密连接*/
+    margin-top: 6px;
+    margin-bottom: 6px;
   }
 }
 
