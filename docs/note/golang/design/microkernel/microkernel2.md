@@ -104,4 +104,15 @@ kernel发送消息到service
 [logger] stopping...
 ```
 
-查看[完整代码](https://gitee.com/weidongkl/weidongkl.github.io/blob/master/docs/note/golang/design/microkernel/microkernel2)
+查看[完整代码](https://gitee.com/weidongkl/weidongkl.github.io/blob/master/docs/note/golang/design/microkernel/microkernel2-1)
+
+### 2.5 优化函数和变量命名
+
+- `HandleEvent` 修改为 `Send`
+- `SendEvent` 修改为 `Push`
+- `LoopEvent` 修改为`Listen`
+- `mutex`修改为 `mu`
+
+查看[完整代码](https://gitee.com/weidongkl/weidongkl.github.io/blob/master/docs/note/golang/design/microkernel/microkernel2-2)
+
+### 
