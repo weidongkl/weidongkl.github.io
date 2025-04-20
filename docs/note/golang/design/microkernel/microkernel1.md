@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 ---
-# microkernel 设计
+# microkernel 设计1
 
 microkernel（微内核）架构的核心思想是 **核心功能最小化**，其他功能以插件或服务的形式运行在用户态，通过 **进程间通信（IPC）** 与内核交互。
 
@@ -9,9 +9,9 @@ microkernel（微内核）架构的核心思想是 **核心功能最小化**，�
 
 ## **1. 微内核核心设计**
 **核心组件**
+**Kernel（内核）**  
 
-1. **Kernel（内核）**  
-   - 负责 **服务注册、消息路由、生命周期管理**。
+1. - 负责 **服务注册、消息路由、生命周期管理**。
 2. **Services（服务）**  
    - 独立模块（如 `LogService`、`StorageService`），运行在用户态。
 3. **通信机制（IPC）**  
@@ -23,7 +23,7 @@ microkernel（微内核）架构的核心思想是 **核心功能最小化**，�
 
 ### 2.1 定义 Kernel（核心）
 ```go
-package microkernel
+package kernel
 
 import (
 	"context"
@@ -42,11 +42,11 @@ type Service interface {
 
 // Kernel 微内核核心
 type Kernel struct {
-    // 注册的服务通道
+	// 注册的服务通道
 	services map[string]Service
-    // 保护 services 的并发访问
-	mutex   sync.RWMutex
-    // 全局事件总线
+	// 保护 services 的并发访问
+	mutex sync.RWMutex
+	// 全局事件总线
 	eventCh chan Event
 }
 
@@ -122,30 +122,29 @@ func (k *Kernel) EventLoop(ctx context.Context) {
 		}
 	}
 }
+
 ```
 
 ---
 
 ### 2.2 实现示例服务（LogService）
 ```go
-package main
+package service
 
 import (
-	"context"
 	"fmt"
-	"goproject/microkernel"
-	"time"
+	"microkernel/kernel"
 )
 
 // LogService 日志服务
 type LogService struct {
-	name    string
-	kernel  *microkernel.Kernel
-	logCh   chan string
-	stopCh  chan struct{}
+	name   string
+	kernel *kernel.Kernel
+	logCh  chan string
+	stopCh chan struct{}
 }
 
-func NewLogService(name string, kernel *microkernel.Kernel) *LogService {
+func NewLogService(name string, kernel *kernel.Kernel) *LogService {
 	return &LogService{
 		name:   name,
 		kernel: kernel,
@@ -178,7 +177,7 @@ func (l *LogService) run() {
 		case log := <-l.logCh:
 			fmt.Printf("[%s] LOG: %s\n", l.name, log)
 			// 模拟发送事件到内核
-			l.kernel.SendEvent(microkernel.Event{
+			l.kernel.SendEvent(kernel.Event{
 				From:    l.name,
 				Type:    "log",
 				Content: log,
@@ -200,16 +199,17 @@ package main
 
 import (
 	"context"
-	"microkernel"
+	"microkernel/kernel"
+	"microkernel/service"
 	"time"
 )
 
 func main() {
 	// 1. 创建微内核
-	kernel := microkernel.NewKernel()
+	kernel := kernel.NewKernel()
 
 	// 2. 注册服务
-	logSvc := NewLogService("logger", kernel)
+	logSvc := service.NewLogService("logger", kernel)
 	if err := kernel.RegisterService(logSvc); err != nil {
 		panic(err)
 	}
@@ -261,3 +261,5 @@ func main() {
 - **通信方式**：
   - 简单场景：`Channel`（如示例）。
   - 复杂场景：`gRPC`、`NATS`、`WebSocket` 等。
+
+查看[完整代码]((https://gitee.com/weidongkl/weidongkl.github.io/blob/master/docs/note/golang/design/microkernel/microkernel1)

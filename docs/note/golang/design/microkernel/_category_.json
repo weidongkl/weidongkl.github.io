@@ -1,0 +1,8 @@
+{
+  "label": "microkernel",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "记录微内核设计学习文档"
+  }
+}
