@@ -1,0 +1,22 @@
+[
+  {
+    "path": "note/golang/design/microkernel/microkernel1",
+    "title": "microkernel 设计1"
+  },
+  {
+    "path": "note/os/debug/gdb",
+    "title": "GDB 调试工具"
+  },
+  {
+    "path": "note/golang/cmd",
+    "title": "Golang `os/exec` 用法"
+  },
+  {
+    "path": "note/golang/serialization",
+    "title": "Golang 序列化/反序列化"
+  },
+  {
+    "path": "note/golang/validator",
+    "title": "Golang Validator"
+  }
+]
