@@ -1,8 +1,8 @@
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+bknote:
+  label: 读书笔记
+  permalink: /bknote
+  description: 读书笔记
 
 hola:
   label: Hola
