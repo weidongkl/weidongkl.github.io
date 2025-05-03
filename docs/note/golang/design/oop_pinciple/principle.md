@@ -7,7 +7,7 @@ sidebar_position: 1
 
 ## SOLID原则
 
-1. **[单一职责原则(SRP - Single Responsibility Principle)](./srp)**
+1. **[单一职责原则(SRP - Single Responsibility Principle)](./srp.md)**
    - 一个类应该只有一个引起它变化的原因
    - 每个类只负责一项职责
 
