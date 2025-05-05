@@ -11,7 +11,7 @@ sidebar_position: 1
    - 一个类应该只有一个引起它变化的原因
    - 每个类只负责一项职责
 
-2. **开闭原则(OCP - Open/Closed Principle)**
+2. **[开闭原则(OCP - Open/Closed Principle)](./ocp.md)**
    - 软件实体(类、模块、函数等)应该对扩展开放，对修改关闭
    - 通过抽象和继承实现新功能，而不是修改现有代码
 
