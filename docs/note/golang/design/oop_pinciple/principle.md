@@ -15,7 +15,7 @@ sidebar_position: 1
    - 软件实体(类、模块、函数等)应该对扩展开放，对修改关闭
    - 通过抽象和继承实现新功能，而不是修改现有代码
 
-3. **里氏替换原则(LSP - Liskov Substitution Principle)**
+3. **[里氏替换原则(LSP - Liskov Substitution Principle)](./lsp.md)**
    - 子类型必须能够替换它们的基类型
    - 派生类不应改变基类的行为，只能扩展它
 
