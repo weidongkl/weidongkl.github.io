@@ -19,7 +19,7 @@ sidebar_position: 1
    - 子类型必须能够替换它们的基类型
    - 派生类不应改变基类的行为，只能扩展它
 
-4. **接口隔离原则(ISP - Interface Segregation Principle)**
+4. **[接口隔离原则(ISP - Interface Segregation Principle)](./isp.md)**
    - 客户端不应被迫依赖它们不使用的接口
    - 将大接口拆分为更小、更具体的接口
 
