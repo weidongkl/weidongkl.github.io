@@ -23,7 +23,7 @@ sidebar_position: 1
    - 客户端不应被迫依赖它们不使用的接口
    - 将大接口拆分为更小、更具体的接口
 
-5. **依赖倒置原则(DIP - Dependency Inversion Principle)**
+5. **[依赖倒置原则(DIP - Dependency Inversion Principle)](./dip.md)**
    - 高层模块不应依赖低层模块，两者都应依赖抽象
    - 抽象不应依赖细节，细节应依赖抽象
 

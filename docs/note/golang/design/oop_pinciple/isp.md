@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # 接口隔离原则(ISP)
 
-## 1. 接口隔离原则简介
+## 1. 概述
 
 **接口隔离原则(Interface Segregation Principle, ISP)** 是SOLID原则中的第四个原则，由Robert C. Martin提出。其核心思想是：
 
@@ -12,7 +12,7 @@ sidebar_position: 5
 
 在Go语言中，这一原则尤为重要，因为Go的接口是隐式实现的，且鼓励小而专注的设计。
 
-## 2. ISP的核心概念
+## 2. 核心概念
 
 - **小而专注**：接口应该只包含客户端真正需要的方法
 - **避免"胖接口"**：不要让接口承担过多职责

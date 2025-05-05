@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # 里氏替换原则(LSP)
 
-## 1. 里氏替换原则简介
+## 1. 概述
 
 **里氏替换原则(Liskov Substitution Principle, LSP)** 是SOLID原则中的第三个原则，由Barbara Liskov提出。其核心思想是：
 
@@ -12,7 +12,7 @@ sidebar_position: 4
 
 在Go语言中，虽然没有传统意义上的继承，但通过**接口(interface)**和**嵌入(struct embedding)**同样需要遵循这一原则。
 
-## 2. LSP的核心概念
+## 2. 核心概念
 
 - **可替换性**：子类型必须能够完全替代父类型
 - **行为一致性**：子类型不应改变父类型的预期行为

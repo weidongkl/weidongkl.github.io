@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # 开闭原则(OCP)
 
-## 1. 开闭原则简介
+## 1. 概述
 
 **开闭原则(Open/Closed Principle, OCP)** 是SOLID原则中的第二个原则，由Bertrand Meyer提出。其核心思想是：
 
@@ -12,7 +12,7 @@ sidebar_position: 3
 
 在Go语言中，这一原则主要通过**接口(interface)**和**组合(composition)**来实现。
 
-## 2. OCP的核心概念
+## 2. 核心概念
 
 - **对扩展开放**：允许在不修改现有代码的情况下添加新功能
 - **对修改关闭**：现有代码应尽可能不被修改，以保持稳定性
