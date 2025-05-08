@@ -10,7 +10,10 @@
 
 条件变量是一种同步原语，它：
 - 允许 goroutine 在某个条件不满足时挂起（等待）
+
 - 当条件可能满足时，通知等待的 goroutine 检查条件
+
+  > 连接池示例：我们创建一个指定大小的连接池，当到达池子大小时，无法再创建新的连接。此时所有的新建连接都应该是`Cond.Wait()`状态。当其中一个连接释放时，就可以广播`Broadcast()`通知等待的新建连接。
 
 ### 2.2 Cond 结构
 
@@ -64,7 +67,7 @@ func (c *Cond) Broadcast()
 ### 4.1 基本使用模式
 
 ```go
-mu.Lock()
+mu.Lock() // mu 是传递到 cond 的Lock。使用cond.L.Lock()也是相同的，mu传递进来就是cond.L
 // 检查条件
 for !condition() {  // for 防止虚假唤醒,或者多个协程被唤醒，只能执行一个
     cond.Wait()
