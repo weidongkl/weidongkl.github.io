@@ -1,8 +1,8 @@
 {
   "label": "设计策略",
-  "position": 2.7,
+  "position": 2.1,
   "link": {
-    "type": "generated-index",
-    "description": "系统设计策略文档"
+    "type": "doc",
+    "id": "note/design/strategy/strategy"
   }
 }
