@@ -179,6 +179,7 @@ const config = {
             type: 'search',
             position: 'right',
           },
+          { to: '/about', label: '关于我', position: 'right' },  
         ],
       },
       algolia: false, // 如果之前配置过 Algolia，需关闭
