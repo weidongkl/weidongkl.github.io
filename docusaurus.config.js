@@ -122,6 +122,10 @@ const config = {
           //   className: 'custom-search-bar', // (可选) 自定义 CSS 类
           // },
           {
+            type: 'search',
+            position: 'right',
+          },
+          {
             type: 'docSidebar',
             sidebarId: 'note',
             position: 'right',
@@ -139,27 +143,27 @@ const config = {
           //   label: '学习笔记',
           // },
           //   带下拉的文档导航
-          {
-            type: 'dropdown',
-            sidebarId: 'note1',
-            position: 'right',
-            label: '仓库',
-            items: [
-              // {
-              //   type: 'docSidebar',
-              //   label: '学习文档',
-              //   sidebarId: 'note',
-              // },
-              {
-                label: 'Gitee',
-                href: 'https://gitee.com/weidongkl',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/weidongkl',
-              },
-            ],
-          },
+          // {
+          //   type: 'dropdown',
+          //   sidebarId: 'note1',
+          //   position: 'right',
+          //   label: '仓库',
+          //   items: [
+          //     // {
+          //     //   type: 'docSidebar',
+          //     //   label: '学习文档',
+          //     //   sidebarId: 'note',
+          //     // },
+          //     {
+          //       label: 'Gitee',
+          //       href: 'https://gitee.com/weidongkl',
+          //     },
+          //     {
+          //       label: 'GitHub',
+          //       href: 'https://github.com/weidongkl',
+          //     },
+          //   ],
+          // },
           // {
           //   type: 'docSidebar',
           //   sidebarId: 'book',
@@ -175,10 +179,7 @@ const config = {
           //   type: 'localeDropdown',
           //   position: 'right',
           // },
-          {
-            type: 'search',
-            position: 'right',
-          },
+
           { to: '/about', label: '关于我', position: 'right' },  
         ],
       },
