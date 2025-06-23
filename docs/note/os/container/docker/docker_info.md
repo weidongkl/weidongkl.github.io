@@ -179,6 +179,11 @@ docker system df -v
   docker save -o ubuntu.tar ubuntu:20.04
   ```
 
+- 导出多个镜像
+
+  ```bash
+  docker save -o multiple_images.tar <镜像1> <镜像2>
+  
 - 导出为压缩文件(推荐)：
 
   - 导出并 gzip 压缩：
