@@ -1,0 +1,8 @@
+{
+  "label": "问题定位",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "问题定位排查笔记。"
+  }
+}
