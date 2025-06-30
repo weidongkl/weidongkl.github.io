@@ -1,17 +1,22 @@
 # 系统可靠性设计
 
-## 1. 可靠性核心概念
+## 1. 核心概念
 
-### 1.1 可靠性定义
+### 1.1 定义
 
-可靠性（Reliability）是指系统在规定条件下和规定时间内，**持续提供正确服务的能力**。一个高可用系统，必须具备在面临异常时“**失败可恢复、状态可控、资源可回收**”的能力。
+系统可靠性（Reliability）指系统在规定条件和时间内，**持续提供正确服务的能力**。一个真正高可用的系统，应具备以下能力：
 
+- **失败可恢复**：遇到故障能快速自我修复或降级；
+- **状态可控**：系统运行状态可被观测和控制；
+- **资源可回收**：出现问题时不会造成资源泄漏或耗尽。
 
-- **服务连续性**：MTBF（平均无故障时间）≥ 99.9%
-- **数据完整性**：错误率 < 0.001%
-- **故障恢复**：MTTR（平均修复时间）< 5分钟
+常用可靠性指标如下：
 
-### 1.2 可靠性的设计原则
+- **服务连续性**：MTBF（平均无故障时间） ≥ 99.9%
+- **数据完整性**：数据错误率 < 0.001%
+- **故障恢复能力**：MTTR（平均修复时间） ≤ 5分钟
+
+### 1.2 设计原则
 
 1. **失败可恢复（Fail Recovery）**
    系统应该能捕获错误，并做出适当处理或降级，不应直接 panic 或崩溃。
@@ -26,13 +31,13 @@
 
 ### 1.3 可靠性设计方法
 
-| 关键点   | 说明                             | 推荐工具/库                                                  |
-| -------- | -------------------------------- | ------------------------------------------------------------ |
-| 限制资源 | goroutine、channel、连接数限制   |                                                              |
-| 明确超时 | 所有网络/IO 操作需设置 timeout   | `avast/retry-go`、自定义、context.Withtimeout                |
-| 可恢复   | 所有错误需被捕获处理，不应 panic |                                                              |
-| 可观测   | 打日志 + 指标 + trace            | `prometheus/client_golang`、`uber-go/zap`、`sirupsen/logrus`、`pprof`、`expvar`、`open-telemetry` |
-| 可退出   | goroutine 应能优雅退出           | channel/signal+select                                        |
+| 关键点   | 说明                              | 推荐工具/库                             |
+| -------- | --------------------------------- | --------------------------------------- |
+| 限制资源 | 控制 goroutine、channel、连接数等 | 使用缓冲、信号量、连接池等方式          |
+| 明确超时 | 网络/IO 操作必须设置超时          | `context.WithTimeout`、`avast/retry-go` |
+| 错误恢复 | 所有错误需捕获处理，避免 panic    | 明确错误类型和恢复策略                  |
+| 可观测性 | 日志 + 指标 + Trace               | `prometheus`、`zap`、`pprof`、`otel`    |
+| 可退出性 | goroutine 应可被安全终止          | 使用 `channel + select` 控制            |
 
 ### 1.4 Golang 可靠性优势
 
@@ -48,7 +53,7 @@ graph TD
 
 ### 2.1 错误处理
 
-#### 错误捕获和传递
+#### 2.1.1 错误捕获和传递
 
 ```go
 // 永远忽略错误 = 埋下定时炸弹
@@ -72,7 +77,7 @@ if err != nil {
 }
 ```
 
-#### 错误包装与分类
+#### 2.1.2 错误包装与分类
 ```go
 type BusinessError struct {
     Code    int
@@ -97,7 +102,7 @@ func ProcessOrder() error {
 }
 ```
 
-#### 错误恢复策略矩阵
+#### 2.1.3 错误恢复策略矩阵
 | 错误类型     | 恢复策略      | Golang实现示例           |
 | ------------ | ------------- | ------------------------ |
 | 临时性错误   | 重试+退避策略 | `retry-go`库+`context`   |
@@ -129,9 +134,9 @@ err := Retry(3, 100*time.Millisecond, func() error {
 
 
 
-### 2.2 资源管理最佳实践
+### 2.2 资源管理
 
-#### 确保资源释放
+#### 2.2.1 确保资源释放
 
 ```go
 func ProcessFile(path string) error {
@@ -149,7 +154,7 @@ func ProcessFile(path string) error {
 }
 ```
 
-#### 防止goroutine 泄露
+#### 2.2.2 防止goroutine 泄露
 
 ```go
 // 退出信号 + select 控制
@@ -175,7 +180,7 @@ time.Sleep(5 * time.Second)
 close(stopCh)
 ```
 
-#### 连接池配置模板
+#### 2.2.3 连接池配置模板
 
 ```go
 // Database连接池配置
@@ -196,59 +201,7 @@ client := &http.Client{
 }
 ```
 
-#### 性能分析
-
-`pprof` + `go tool trace`
-
-### 2.3 并发安全
-
-`sync.Mutex` /`atomic`/`channel`
-
-#### 避免竞态条件
-
-```go
-type SafeCounter struct {
-    mu    sync.Mutex
-    count int
-}
-
-func (c *SafeCounter) Increment() {
-    c.mu.Lock()
-    defer c.mu.Unlock() // defer 解锁确保异常安全
-    c.count++
-}
-
-// 使用 sync/atomic 的无锁优化
-var atomicCount int64
-atomic.AddInt64(&atomicCount, 1) // 原子操作
-```
-
-> **检测工具**：`go run -race your_app.go`
-
-#### Worker Pool实现
-```go
-type Task func()
-
-func NewWorkerPool(size int) chan Task {
-    tasks := make(chan Task, size)
-    for i := 0; i < size; i++ {
-        go worker(tasks)
-    }
-    return tasks
-}
-
-func worker(tasks <-chan Task) {
-    for task := range tasks {
-        task()
-    }
-}
-
-// 使用示例
-pool := NewWorkerPool(10)
-pool <- func() { /* 任务逻辑 */ }
-```
-
-### 2.4 超时控制
+#### 2.2.4 超时控制
 
 通过`context.WithTimeout`实现
 
@@ -271,15 +224,70 @@ data, err := FetchData(ctx, "https://api.example.com")
 
 > 防止任务阻塞
 
-### 2.5 防御性编程
+### 
 
-#### 输入校验
+#### 2.2.5 性能分析工具
 
-输入校验前置 + 立即返回错误
+- `pprof`
+- `expvar`
+- `go tool trace`
+
+### 2.3 并发安全
+
+`sync.Mutex` /`atomic`/`channel`
+
+#### 2.3.1 锁机制与原子操作
+
+```go
+type SafeCounter struct {
+    mu    sync.Mutex
+    count int
+}
+
+func (c *SafeCounter) Increment() {
+    c.mu.Lock()
+    defer c.mu.Unlock() // defer 解锁确保异常安全
+    c.count++
+}
+
+// 使用 sync/atomic 的无锁优化
+var atomicCount int64
+atomic.AddInt64(&atomicCount, 1) // 原子操作
+```
+
+> **检测工具**：`go run -race your_app.go`
+
+#### 2.3.2 Worker Pool实现
+```go
+type Task func()
+
+func NewWorkerPool(size int) chan Task {
+    tasks := make(chan Task, size)
+    for i := 0; i < size; i++ {
+        go worker(tasks)
+    }
+    return tasks
+}
+
+func worker(tasks <-chan Task) {
+    for task := range tasks {
+        task()
+    }
+}
+
+// 使用示例
+pool := NewWorkerPool(10)
+pool <- func() { /* 任务逻辑 */ }
+```
+
+### 2.4 防御性编程
+
+#### 2.4.1 输入校验与早失败
 
 ```go
 func ValidateInput(input UserInput) error {
     if input.Email == "" {
+        // 存在错误，立刻返回
         return errors.New("email cannot be empty")
     }
     if !strings.Contains(input.Email, "@") {
@@ -299,7 +307,7 @@ if err != nil {
 }
 ```
 
-#### 健康检查接口
+#### 2.4.2 健康检查与自检
 
 ```go
 http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -309,9 +317,7 @@ http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 //  支持服务自检，可配合 k8s、ELB 实现健康探针。
 ```
 
-#### 可观测性实现
-
-**结构化日志+指标埋点**
+#### 2.4.3 可观测性与日志埋点
 
 ```go
 import (
@@ -344,9 +350,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-#### 异步通信
+### 2.5 异步通信 
 
-**确认机制**
+#### 2.5.1 确认机制
 
 ```go
 // 多服务确认
@@ -458,7 +464,7 @@ func main() {
 }
 ```
 
-**通知机制/监听模式**
+#### 2.5.2 通知机制/监听模式
 
 ```go
 // inventory/consumer.go
@@ -471,9 +477,9 @@ func (s *InventoryService) OnPaymentSuccess(event PaymentSuccessEvent) {
 }
 ```
 
-### 2.5 单元测试
+### 2.6 单元测试与压力测试
 
-#### 覆盖率验证可靠性
+#### 2.6.1 覆盖率验证可靠性
 
 ```go
 // 单元测试 + 错误注入
@@ -530,7 +536,7 @@ sequenceDiagram
 - [ ] 所有网络调用设置超时（≤3s）
 - [ ] 数据库连接池已正确配置
 - [ ] 关键路径错误日志已埋点
-- [ ] Prometheus指标采集已接入
+- [ ] 接入监控系统（如 Prometheus）
 - [ ] Goroutine泄漏测试通过
 
 ### 4.2 运行时监控关键指标
@@ -577,5 +583,4 @@ limiter := rate.NewLimiter(rate.Every(100*time.Millisecond), 10)
 | 数据处理管道   | 有界队列+背压 | `buffered channel` + `select` |
 | 定时任务       | 分布式锁+幂等 | `redislock` + 任务ID去重      |
 | 配置热更新     | 原子指针交换  | `atomic.Value` + `fsnotify`   |
-
 
