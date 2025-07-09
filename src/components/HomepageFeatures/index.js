@@ -26,7 +26,7 @@ export default function HomepageFeatures() {
                             同时，书写的过程还能激发新思考，让成长清晰可见。
                         </p>
                         <Link
-                            to="/docs/category/golang"
+                            to="/docs/category/os"
                         >
                             📚 查看全部笔记
                         </Link>
