@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkweidongkl_github_io=self.webpackChunkweidongkl_github_io||[]).push([[5430],{2185:e=>{e.exports=JSON.parse('{"tags":[{"label":"\u8bfb\u4e66\u7b14\u8bb0","permalink":"/en/blog/tags/bknote","description":"\u8bfb\u4e66\u7b14\u8bb0","count":3}]}')}}]);
