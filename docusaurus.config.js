@@ -39,12 +39,13 @@ const config = {
     [
       '@easyops-cn/docusaurus-search-local',
       {
-        // 配置选项（同旧版插件）
+        // 配置选项
         indexDocs: true,
         indexBlog: true,
-        language: 'zh', // 支持 'zh' 等语言
+        indexPages: false, // 是否索引静态页面
+        language: ['zh', 'en'], // 支持多语言
         hashed: true,   // 提升中文搜索效果
-        searchBarShortcut: false,
+        searchBarShortcut: false, // 启用 / 快捷键搜索
         searchBarPosition: "left",
       },
     ],
@@ -187,8 +188,7 @@ const config = {
           { to: '/about', label: '关于我', position: 'right' },  
         ],
       },
-      algolia: false, // 如果之前配置过 Algolia，需关闭
-      search: undefined,
+
       footer: {
         style: 'dark',
         links: [
