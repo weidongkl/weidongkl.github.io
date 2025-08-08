@@ -181,9 +181,10 @@ const config = {
           //   position: 'right',
           // },
           // {
-          //   type: 'localeDropdown',
-          //   position: 'right',
-          // },
+          {
+            type: 'localeDropdown',
+            position: 'right',
+          },
 
           { to: '/about', label: '关于我', position: 'right' },  
         ],

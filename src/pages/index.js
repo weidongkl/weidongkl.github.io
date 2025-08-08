@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import Translate from '@docusaurus/Translate';
 
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
@@ -32,8 +33,8 @@ export default function Home() {
   return (
     <Layout
       // title={`Hello from ${siteConfig.title}`}
-      title='Weidong'
-      description="Description will go into a meta tag in <head />">
+      title="Weidong"
+      description="Personal knowledge base and blog - recording study notes, technical insights, and thoughts on books and projects.">
       {/*<HomepageHeader />*/}
       <main>
         <HomepageFeatures />

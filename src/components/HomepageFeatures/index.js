@@ -4,6 +4,7 @@ import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 import recentDocs from "../../data/recentDocs.json";
 import React from "react";
+import Translate from '@docusaurus/Translate';
 
 export default function HomepageFeatures() {
     const Svg = require('@site/static/img/index/user3.svg').default;
@@ -18,17 +19,22 @@ export default function HomepageFeatures() {
                 </div>
                 <div className={clsx('col col--6', styles.textSection)}>
                     <div className="text--left padding-horiz--md">
-                        <Heading as="h2" className="text-2xl  mb-4">笔迹 · 知行</Heading>
-                        {/*<p>笔记不仅能帮助我们整理思路、加深理解，还能积累个人知识，避免遗忘。<br/>*/}
-                        {/*    同时，书写的过程还能激发新思考，让成长清晰可见。</p>*/}
+                        <Heading as="h2" className="text-2xl  mb-4">
+                            <Translate id="homepage.title">笔迹 · 知行</Translate>
+                        </Heading>
                         <p className="text-gray-700 mb-4 leading-relaxed">
-                            笔记不仅能帮助我们整理思路、加深理解，还能积累个人知识，避免遗忘。<br />
-                            同时，书写的过程还能激发新思考，让成长清晰可见。
+                            <Translate id="homepage.description.part1">
+                                笔记不仅能帮助我们整理思路、加深理解，还能积累个人知识，避免遗忘。
+                            </Translate>
+                            <br />
+                            <Translate id="homepage.description.part2">
+                                同时，书写的过程还能激发新思考，让成长清晰可见。
+                            </Translate>
                         </p>
                         <Link
                             to="/docs/category/os"
                         >
-                            📚 查看全部笔记
+                            <Translate id="homepage.viewNotes">📚 查看全部笔记</Translate>
                         </Link>
                         {/*<div className="bg-gray-100 p-4 rounded-xl shadow-md mt-6 w-full max-w-xl">*/}
                         {/*    <h3 className="text-2xl mb-2">📌 最近更新</h3>*/}
