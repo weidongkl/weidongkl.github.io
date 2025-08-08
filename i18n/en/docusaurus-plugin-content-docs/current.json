@@ -8,39 +8,39 @@
     "description": "The label for category OS in sidebar note"
   },
   "sidebar.note.category.OS.link.generated-index.description": {
-    "message": "操作系统相关笔记",
+    "message": "Operating system related notes",
     "description": "The generated-index page description for category OS in sidebar note"
   },
   "sidebar.note.category.调试工具": {
-    "message": "调试工具",
+    "message": "Debug Tools",
     "description": "The label for category 调试工具 in sidebar note"
   },
   "sidebar.note.category.调试工具.link.generated-index.description": {
-    "message": "调试工具相关笔记",
+    "message": "Debug tools related notes",
     "description": "The generated-index page description for category 调试工具 in sidebar note"
   },
   "sidebar.note.category.问题定位": {
-    "message": "问题定位",
+    "message": "Problem Diagnosis",
     "description": "The label for category 问题定位 in sidebar note"
   },
   "sidebar.note.category.问题定位.link.generated-index.description": {
-    "message": "问题定位排查笔记。",
+    "message": "Problem diagnosis and troubleshooting notes.",
     "description": "The generated-index page description for category 问题定位 in sidebar note"
   },
   "sidebar.note.category.容器": {
-    "message": "容器",
+    "message": "Containers",
     "description": "The label for category 容器 in sidebar note"
   },
   "sidebar.note.category.docker": {
-    "message": "docker",
+    "message": "Docker",
     "description": "The label for category docker in sidebar note"
   },
   "sidebar.note.category.网路": {
-    "message": "网路",
+    "message": "Network",
     "description": "The label for category 网路 in sidebar note"
   },
   "sidebar.note.category.网路.link.generated-index.description": {
-    "message": "网络笔记。",
+    "message": "Network notes.",
     "description": "The generated-index page description for category 网路 in sidebar note"
   },
   "sidebar.note.category.Build": {
@@ -48,7 +48,7 @@
     "description": "The label for category Build in sidebar note"
   },
   "sidebar.note.category.Build.link.generated-index.description": {
-    "message": "编译构建相关笔记",
+    "message": "Compilation and build related notes",
     "description": "The generated-index page description for category Build in sidebar note"
   },
   "sidebar.note.category.Design": {
@@ -56,55 +56,55 @@
     "description": "The label for category Design in sidebar note"
   },
   "sidebar.note.category.Design.link.generated-index.description": {
-    "message": "记录一些程序设计方法",
+    "message": "Record some program design methods",
     "description": "The generated-index page description for category Design in sidebar note"
   },
   "sidebar.note.category.微内核设计模式": {
-    "message": "微内核设计模式",
+    "message": "Microkernel Design Pattern",
     "description": "The label for category 微内核设计模式 in sidebar note"
   },
   "sidebar.note.category.微内核设计模式.link.generated-index.description": {
-    "message": "microkernel（微内核）架构的核心思想是 核心功能最小化，其他功能以插件或服务的形式运行在用户态，通过 进程间通信（IPC） 与内核交互。\n下面记录了一个微内核开发demo的笔记",
+    "message": "The core idea of microkernel architecture is to minimize core functionality, with other functions running in user space as plugins or services, interacting with the kernel through Inter-Process Communication (IPC).\nBelow are notes from a microkernel development demo",
     "description": "The generated-index page description for category 微内核设计模式 in sidebar note"
   },
   "sidebar.note.category.面相对象设计原则": {
-    "message": "面相对象设计原则",
+    "message": "Object-Oriented Design Principles",
     "description": "The label for category 面相对象设计原则 in sidebar note"
   },
   "sidebar.note.category.标准设计模式": {
-    "message": "标准设计模式",
+    "message": "Standard Design Patterns",
     "description": "The label for category 标准设计模式 in sidebar note"
   },
   "sidebar.note.category.标准设计模式.link.generated-index.description": {
-    "message": "记录标准的设计模式文档",
+    "message": "Record standard design pattern documentation",
     "description": "The generated-index page description for category 标准设计模式 in sidebar note"
   },
   "sidebar.note.category.创建者设计模式": {
-    "message": "创建者设计模式",
+    "message": "Creational Design Patterns",
     "description": "The label for category 创建者设计模式 in sidebar note"
   },
   "sidebar.note.category.创建者设计模式.link.generated-index.description": {
-    "message": "创建者设计模式文档",
+    "message": "Creational design pattern documentation",
     "description": "The generated-index page description for category 创建者设计模式 in sidebar note"
   },
   "sidebar.note.category.行为设计模式": {
-    "message": "行为设计模式",
+    "message": "Behavioral Design Patterns",
     "description": "The label for category 行为设计模式 in sidebar note"
   },
   "sidebar.note.category.行为设计模式.link.generated-index.description": {
-    "message": "行为设计模式文档",
+    "message": "Behavioral design pattern documentation",
     "description": "The generated-index page description for category 行为设计模式 in sidebar note"
   },
   "sidebar.note.category.设计策略": {
-    "message": "设计策略",
+    "message": "Design Strategies",
     "description": "The label for category 设计策略 in sidebar note"
   },
   "sidebar.note.category.算法": {
-    "message": "算法",
+    "message": "Algorithms",
     "description": "The label for category 算法 in sidebar note"
   },
   "sidebar.note.category.算法.link.generated-index.description": {
-    "message": "记录一些算法",
+    "message": "Record some algorithms",
     "description": "The generated-index page description for category 算法 in sidebar note"
   },
   "sidebar.note.category.Git": {
@@ -112,7 +112,7 @@
     "description": "The label for category Git in sidebar note"
   },
   "sidebar.note.category.Git.link.generated-index.description": {
-    "message": "git 相关笔记",
+    "message": "Git related notes",
     "description": "The generated-index page description for category Git in sidebar note"
   },
   "sidebar.note.category.Golang": {
@@ -120,15 +120,15 @@
     "description": "The label for category Golang in sidebar note"
   },
   "sidebar.note.category.Golang.link.generated-index.description": {
-    "message": "golang 用法笔记",
+    "message": "Golang usage notes",
     "description": "The generated-index page description for category Golang in sidebar note"
   },
   "sidebar.note.category.并发": {
-    "message": "并发",
+    "message": "Concurrency",
     "description": "The label for category 并发 in sidebar note"
   },
   "sidebar.note.category.并发.link.generated-index.description": {
-    "message": "golang 并发笔记",
+    "message": "Golang concurrency notes",
     "description": "The generated-index page description for category 并发 in sidebar note"
   }
 }
