@@ -1,11 +1,12 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 
 export default function About() {
   return (
     <Layout title="About Me" description="About the Author">
-      <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-        <h1>About the Author</h1>
+      <div style={{ padding: '2rem', maxWidth: '888px', margin: '0 auto' }}>
+        <Heading as="h1">About the Author</Heading>
         
         <p>
           Hi, I'm <strong>Weidong (魏东)</strong> — a passionate software developer focusing on Golang, Linux (especially Red Hat), performance optimization, and open-source contributions like <em>openEuler</em>.
