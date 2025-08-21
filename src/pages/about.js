@@ -41,7 +41,10 @@ export default function About() {
             display: 'flex', 
             justifyContent: 'center', 
             alignItems: 'center',
-            padding: '1rem'
+            padding: '1rem',
+            '@media (max-width: 768px)': {
+              display: 'none'
+            }
           }}>
             <img 
               src="/img/about.png" 
