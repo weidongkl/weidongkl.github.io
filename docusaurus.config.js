@@ -28,6 +28,27 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
+  // 文件监视器优化设置
+  customFields: {
+    // 减少文件监视器负担
+    watchOptions: {
+      ignored: [
+        '**/node_modules/**',
+        '**/.git/**',
+        '**/build/**',
+        '**/dist/**',
+        '**/.docusaurus/**',
+        '**/static/**',
+        '**/*.log',
+        '**/i18n/**/docusaurus-plugin-content-docs/**',
+        '**/i18n/**/docusaurus-plugin-content-blog/**'
+      ],
+      usePolling: false,
+      interval: 1000,
+      binaryInterval: 3000
+    }
+  },
+
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
