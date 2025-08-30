@@ -50,7 +50,7 @@ export default function About() {
               src="/img/about.png" 
               alt="About the Author" 
               style={{
-                maxWidth: '188px',
+                maxWidth: '250px',
                 width: '100%',
                 height: 'auto',
                 borderRadius: '8px'
