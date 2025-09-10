@@ -138,7 +138,7 @@ class Article(models.Model):
 - **任务 TaskDemo**（多对一 → 项目，多对多 → 用户）
 
 ```python
-demo/models.py
+# demo/models.py
 from django.db import models
 
 # 用户表
@@ -176,7 +176,7 @@ python manage.py migrate
 ## 4. 序列化器
 
 ```python
-demo/serializers.py
+# demo/serializers.py
 from rest_framework import serializers
 from .models import UserDemo, ProjectDemo, TaskDemo
 
@@ -199,7 +199,7 @@ class ProjectDemoSerializer(serializers.ModelSerializer):
 class TaskDemoSerializer(serializers.ModelSerializer):
     project_name = serializers.CharField(source="project.name", read_only=True)
     assignees_detail = UserDemoSerializer(source="assignees", many=True, read_only=True)
-    another_name = serializers.CharField(source='project_name', read_only=True, help_text="演示字段重命名")
+    another_name = serializers.CharField(source='title', read_only=True, help_text="演示字段重命名")
 
     class Meta:
         model = TaskDemo
@@ -465,6 +465,19 @@ API 返回结果将统一为：
 pip install drf-yasg
 ```
 
+**配置**
+
+```python
+# settings.py
+INSTALLED_APPS = [
+    ...
+    'drf_yasg',
+    ...,
+]
+```
+
+
+
 **配置路由**
 
 在 `myproject/urls.py` 增加：
@@ -524,7 +537,7 @@ pip install drf-spectacular
 **配置**
 
 ```python
-settings.py
+# settings.py
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
@@ -565,6 +578,102 @@ urlpatterns = [
 - OpenAPI JSON: `http://127.0.0.1:8000/api/schema/`
 - Swagger UI: `http://127.0.0.1:8000/api/schema/swagger-ui/`
 - ReDoc: `http://127.0.0.1:8000/api/schema/redoc/`
+
+**给 ViewSet 加注释**
+
+**参数**：用 `OpenApiParameter`。
+
+**请求体**：用 `request=Serializer`。
+
+**响应体**：用 `responses={code: Serializer}` 或 `OpenApiResponse`。
+
+**批量注释**： `@extend_schema_view`
+
+- 批量方式示例
+
+  ```python
+  from django.shortcuts import render
+  from .models import UserDemo, ProjectDemo, TaskDemo
+  from .serializers import UserDemoSerializer, ProjectDemoSerializer, TaskDemoSerializer
+  from rest_framework import viewsets
+  
+  # 用于生成OpenAPI schema
+  from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiResponse
+  
+  
+  @extend_schema_view(
+      list=extend_schema(
+          summary="获取用户列表",
+          parameters=[
+              OpenApiParameter(name="q", description="搜索关键字", required=False, type=str),
+          ],
+          responses={200: UserDemoSerializer(many=True)},
+      ),     
+      retrieve=extend_schema(
+          summary="获取单个用户",
+          responses={
+              200: OpenApiResponse(UserDemoSerializer, description="成功返回用户"),
+              404: OpenApiResponse(description="用户不存在"),
+          },
+      ),
+      create=extend_schema(
+          summary="创建新用户",
+          request=UserDemoSerializer,
+          responses={201: UserDemoSerializer},
+      ),    update=extend_schema(summary="更新用户"),
+      destroy=extend_schema(summary="删除用户"),
+  )
+  
+  
+  class UserDemoViewSet(viewsets.ModelViewSet):
+      queryset = UserDemo.objects.all()
+      serializer_class = UserDemoSerializer
+  ```
+
+- 单独的action示例
+
+  ```python
+  from django.shortcuts import render
+  from .models import UserDemo, ProjectDemo, TaskDemo
+  from .serializers import UserDemoSerializer, ProjectDemoSerializer, TaskDemoSerializer
+  from rest_framework import viewsets
+  
+  # 用于生成OpenAPI schema
+  from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiResponse
+  
+  class UserDemoViewSet(viewsets.ModelViewSet):
+      queryset = UserDemo.objects.all()
+      serializer_class = UserDemoSerializer
+      @extend_schema(
+          parameters=[
+              OpenApiParameter(name="active", description="是否激活用户", required=False, type=bool),
+          ],
+          responses={200: UserDemoSerializer(many=True)},
+      )
+      def list(self, request, *args, **kwargs):
+          return super().list(request, *args, **kwargs)
+  
+      @extend_schema(
+      responses={
+          200: OpenApiResponse(
+              response=UserDemoSerializer,
+              description="成功返回",
+              examples=[
+                  OpenApiExample(
+                      "示例用户",
+                      value={"id": 1, "username": "alice", "email": "alice@example.com"},
+                  )
+              ],
+          )
+      }
+  )
+      def retrieve(self, request, *args, **kwargs):
+          return super().retrieve(request, *args, **kwargs)
+  ```
+
+
+
+
 
 ### 7.4 过滤和搜索
 
