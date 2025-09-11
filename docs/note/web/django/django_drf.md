@@ -779,6 +779,164 @@ class BookViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 ```
 
+### 7.6 Middleware
+
+#### 7.6.1 简介
+
+- **Middleware**（中间件）是 Django 在 **请求和响应处理流程** 中间插入的钩子函数。
+- 每个请求到达视图前、每个响应返回客户端前，都会经过中间件。
+- 常见用途：
+  - 认证与权限检查
+  - 请求日志
+  - 性能监控（耗时统计）
+  - 异常处理
+  - CORS 处理
+
+#### 7.6.2 Middleware 生命周期
+
+1. **请求阶段**：`__call__` → `process_view`
+2. **视图处理**：执行 View
+3. **响应阶段**：`process_exception`（如有异常）→ `process_template_response` → 返回 Response
+
+#### 7.6.3 自定义 Middleware 示例
+
+```python
+import time
+from django.utils.deprecation import MiddlewareMixin
+
+class RequestLogMiddleware(MiddlewareMixin):
+    #  旧写法
+    # def process_request(self, request):
+    #     request.start_time = time.time()
+    #     print(f"请求开始: {request.method} {request.path}")
+
+    # def process_response(self, request, response):
+    #     duration = time.time() - getattr(request, 'start_time', time.time())
+    #     print(f"请求结束: {request.method} {request.path} 用时 {duration:.2f}s")
+    #     return response
+
+    # 新写法
+    def __init__(self, get_response):
+        self.get_response = get_response
+        print("RequestLogMiddleware __init__") # 服务启动时打印一次
+        # 一次性配置和初始化
+
+    def __call__(self, request):
+        # 在每个请求上调用视图之前执行
+        print(f"Processing request: {request.path}")
+        
+        # 可以修改请求对象
+        request.custom_attribute = "custom_value"
+        
+        response = self.get_response(request)
+        
+        # 在每个响应返回给客户端之前执行
+        print(f"Returning response for: {request.path}")
+        
+        # 可以修改响应对象
+        response['X-Custom-Header'] = 'Custom Value'
+        
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        # 在调用视图之前，但在URL解析之后执行
+        print(f"About to call view: {view_func.__name__}")
+        # 如果返回 HttpResponse，将跳过视图
+        return None
+
+    def process_exception(self, request, exception):
+        # 当视图抛出异常时调用
+        print(f"Exception occurred: {exception}")
+        # 可以返回自定义响应
+        return None
+
+    def process_template_response(self, request, response):
+        # 如果响应有 render() 方法（如TemplateResponse）时调用
+        print("Processing template response")
+        return response
+
+```
+
+注册到 `settings.py`：
+
+```python
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    ...,
+    'demo.middleware.RequestLogMiddleware',
+]
+```
+
+### 7.7 DRF Exception Handler
+
+#### 7.7.1 作用
+
+- DRF 提供了全局异常处理函数 `EXCEPTION_HANDLER`，用于将 **Python 异常 → DRF Response**。
+- 默认行为：常见异常（如 `ValidationError`, `PermissionDenied`）会返回 JSON 格式响应。
+
+#### 7.7.2 自定义 Exception Handler
+
+```python
+# demo/utils/exception.py
+from rest_framework.views import exception_handler
+from rest_framework.response import Response
+
+def custom_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        return Response({
+            "code": response.status_code,
+            "message": response.data.get("detail", "error"),
+            "data": None
+        }, status=response.status_code)
+
+    # 未处理的异常
+    return Response({
+        "code": 500,
+        "message": str(exc),
+        "data": None
+    }, status=500)
+```
+
+在 `settings.py` 配置：
+
+```python
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'demo.utils.exception.custom_exception_handler'
+}
+```
+
+#### 7.7.3 效果
+
+请求参数错误：
+
+```http
+POST /api/users/
+{}
+```
+
+返回：
+
+```json
+{
+  "code": 400,
+  "message": "This field is required.",
+  "data": null
+}
+```
+
+服务器错误：
+
+```json
+{
+  "code": 500,
+  "message": "division by zero",
+  "data": null
+}
+```
+
 ## 8. 参考资源
 
 - Django 官方文档: https://docs.djangoproject.com/
