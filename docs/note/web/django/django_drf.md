@@ -53,22 +53,22 @@ INSTALLED_APPS = [
 
 ### 3.1 常用字段
 
-| 字段类型                            | 说明         | 常用场景                     | 示例                                                        |
-| :---------------------------------- | :----------- | :--------------------------- | :---------------------------------------------------------- |
-| **`CharField(max_length=...)`**     | 字符串字段   | 短文本数据（标题、名称等）   | `title = CharField(max_length=100)`                         |
-| **`TextField`**                     | 长文本字段   | 文章内容、详细描述等大段文本 | `content = TextField()`                                     |
-| **`IntegerField`**                  | 整数字段     | 数量、年龄、评分等整数值     | `age = IntegerField()`                                      |
-| **`BooleanField`**                  | 布尔值字段   | 是否启用、是否完成等二值状态 | `is_active = BooleanField(default=True)`                    |
-| **`DateTimeField`**                 | 日期时间字段 | 创建时间、更新时间等时间戳   | `created_at = DateTimeField(auto_now_add=True)`             |
-| **`ForeignKey`**                    | 外键关联     | 一对多关系（如用户与文章）   | `author = ForeignKey(User, on_delete=models.CASCADE)`       |
-| **`ManyToManyField`**               | 多对多关联   | 多对多关系（如文章与标签）   | `tags = ManyToManyField(Tag)`                               |
-| **`choices` + `get_xxx_display()`** | 枚举选择字段 | 状态、类型等有限选项字段     | `status = CharField(max_length=10, choices=STATUS_CHOICES)` |
+| 字段类型                            | 说明         | 常用场景                     | 示例                                                         |
+| :---------------------------------- | :----------- | :--------------------------- | :----------------------------------------------------------- |
+| **`CharField(max_length=...)`**     | 字符串字段   | 短文本数据（标题、名称等）   | `title = CharField(max_length=100)` > `max_length` 是CharField的必填字段 |
+| **`TextField`**                     | 长文本字段   | 文章内容、详细描述等大段文本 | `content = TextField()`                                      |
+| **`IntegerField`**                  | 整数字段     | 数量、年龄、评分等整数值     | `age = IntegerField()`                                       |
+| **`BooleanField`**                  | 布尔值字段   | 是否启用、是否完成等二值状态 | `is_active = BooleanField(default=True)`                     |
+| **`DateTimeField`**                 | 日期时间字段 | 创建时间、更新时间等时间戳   | `created_at = DateTimeField(auto_now_add=True)`              |
+| **`ForeignKey`**                    | 外键关联     | 一对多关系（如用户与文章）   | `author = ForeignKey(User, on_delete=models.CASCADE)`        |
+| **`ManyToManyField`**               | 多对多关联   | 多对多关系（如文章与标签）   | `tags = ManyToManyField(Tag)`                                |
+| **`choices` + `get_xxx_display()`** | 枚举选择字段 | 状态、类型等有限选项字段     | `status = CharField(max_length=10, choices=STATUS_CHOICES)`  |
 
 #### 3.1.1 字段通用参数
 
 | 参数               | 类型   | 说明                                 | 适用字段                          | 示例                             |
 | :----------------- | :----- | :----------------------------------- | :-------------------------------- | :------------------------------- |
-| **`max_length`**   | `int`  | **最大长度限制**（必填）             | `CharField`及基于它的字段         | `max_length=100`                 |
+| **`max_length`**   | `int`  | **最大长度限制**（**必填**）         | `CharField`及基于它的字段         | `max_length=100`                 |
 | **`verbose_name`** | `str`  | **字段显示名称**（用于Admin和表单）  | 所有字段                          | `verbose_name="用户姓名"`        |
 | **`unique`**       | `bool` | **唯一性约束**（不允许重复值）       | 所有字段                          | `unique=True`                    |
 | **`blank`**        | `bool` | **表单验证**层面是否允许为空         | 所有字段                          | `blank=True`（表单可选）         |
@@ -83,7 +83,7 @@ INSTALLED_APPS = [
 - **`blank=True`**：表单验证时允许为空（前端可选）。如果你不填写，Django 会存储一个**空字符串** (`''`)，而不是 `NULL`。
 - **`null=True`**：数据库允许存储`NULL`值（数据库可空）
 - **最佳实践**：
-  - 对于`CharField`/`TextField`：通常只设置`blank=True`（存储空字符串而非`NULL`）
+  - 对于`CharField`/`TextField`：通常只设置`blank=True`（存储空字符串而非`NULL`,default=""）。也可以增加null=True,此时当你写入None 或者不写入数据，它的值都是None。
   - 同时设置 `blank=True` 和 `null=True` (对于非字符串字段或 `ForeignKey`)。表示一个“未知”或“未设置”的状态，并且该状态不是空字符串时，使用这个组合
 
 ###  `DateTimeField` 时间参数
