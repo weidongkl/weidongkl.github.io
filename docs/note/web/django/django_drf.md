@@ -175,6 +175,8 @@ python manage.py migrate
 
 ## 4. 序列化器
 
+### 4.1 示例代码
+
 ```python
 # demo/serializers.py
 from rest_framework import serializers
@@ -211,6 +213,208 @@ class TaskDemoSerializer(serializers.ModelSerializer):
 >
 > 2. **反序列化（输入，如 POST/PUT/PATCH 请求）**：这些字段会**被忽略**
 > 3. 对于**模型本身存在的字段**（如 `id`, ），使用 `Meta.read_only_fields` 来设置为只读更加简洁。对于你**自己添加的、模型中不存在的序列化器字段**（如 `project_name`, `assignees_detail`），你必须在声明该字段时使用 `read_only=True`，因为它们对序列化器来说是“新”的，`read_only_fields` 列表不认识它们。
+
+### 4.2 高阶用法说明
+
+------
+
+#### 4.2.1 自定义序列化输出（to_representation）
+
+通过重写 `to_representation()` 方法，可以完全控制对象在序列化时的输出形式。这是实现字段重命名、过滤空字段、调整输出结构的常用方式。
+
+**字段重命名**
+
+通过 `to_representation()` 实现：
+
+```python
+class ProjectDemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectDemo
+        fields = ["id", "name", "desc"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["description"] = data.pop("desc")  # 重命名字段,pop 弹出来原值。
+        return data
+    
+# or
+
+class ProjectDemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectDemo
+        fields = ["id", "name"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["description"] = instance.desc  # 重命名字段
+        return data
+
+```
+
+👉 **适用场景**：当后端字段命名与前端展示字段不一致时。
+
+------
+
+**过滤空字段**
+
+在部分接口中，可根据需要隐藏空值或 `None` 的字段：
+
+```python
+class ProjectDemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectDemo
+        fields = ["id", "name", "desc", "remark"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {k: v for k, v in data.items() if v not in (None, "", [])}
+```
+
+👉 **适用场景**：需要输出更紧凑的 JSON，隐藏无意义字段。
+
+------
+
+**聚合或嵌套结构输出**
+
+可以在 `to_representation()` 中自定义复杂结构：
+
+```python
+class ProjectDemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectDemo
+        fields = ["id", "name"]
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "summary": {
+                "name": instance.name,
+                "project_count": instance.projects.count(),
+            },
+        }
+```
+
+👉 **适用场景**：接口需返回聚合统计、分组或嵌套结构时。
+
+------
+
+#### 4.2.2 动态字段控制
+
+通过动态字段控制，可以在序列化器初始化时选择性输出部分字段。这对于 **不同场景或用户角色返回不同字段** 非常实用。
+
+```python
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    """允许在初始化时动态控制返回的字段"""
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop("fields", None)
+        super().__init__(*args, **kwargs)
+        if fields is not None:
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+```
+
+使用示例：
+
+```python
+serializer = UserDemoSerializer(user, fields=("id", "name"))
+```
+
+👉 **适用场景**：
+
+- 不同接口或权限场景下输出不同字段；
+- 根据 query 参数或 context 调整返回字段；
+- 提升通用序列化器的复用性。
+
+------
+
+#### 4.2.3 自定义字段（SerializerMethodField）
+
+`SerializerMethodField` 允许在序列化中添加只读的自定义字段，通过定义 `get_<field_name>` 方法生成字段值。
+
+```python
+ class UserDemoSerializer(serializers.ModelSerializer):
+    task_count = serializers.SerializerMethodField()
+    projects = serializers.SerializerMethodField() # 增加一个field
+    class Meta:
+        model = UserDemo
+        fields = '__all__'
+    def get_task_count(self, obj):
+        return obj.tasks.count()
+    def get_projects(self, obj): # 这个field(projects)的获取方法
+        projects = ProjectDemo.objects.filter(owner=obj)
+        return ProjectDemoSerializer(projects, many=True).data
+
+# projects字段效果相同
+class UserDemoSerializer(serializers.ModelSerializer):
+    projects = ProjectDemoSerializer(many=True, read_only=True, source='projects')
+    #projects = ProjectDemoSerializer(many=True, read_only=True, source='owner_set')
+    class Meta:
+        model = UserDemo
+        fields = '__all__'
+```
+
+👉 **适用场景**：需在序列化中展示统计字段、拼接字段或从关联模型获取数据。
+
+**自定义方法对比**
+
+| 实现方式                  | 用法                                   | 优点         | 备注           |
+| ------------------------- | -------------------------------------- | ------------ | -------------- |
+| `SerializerMethodField`   | 定义方法 `get_<field_name>(self, obj)` | 灵活，可计算 | 只读           |
+| `source="relation.field"` | 自动映射字段或反向关系                 | 简洁         | 可读可写       |
+| `to_representation()`     | 自定义输出结构                         | 最灵活       | 要手动维护结构 |
+
+------
+
+#### 4.2.4 嵌套序列化与反序列化
+
+当模型之间存在外键或一对多关系时，可以在序列化器中嵌套其他序列化器以展示关联对象。
+
+**嵌套读取（read_only）**
+
+```python
+class ProjectDemoSerializer(serializers.ModelSerializer):
+    owner = UserDemoSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectDemo
+        fields = ["id", "name", "owner"]
+```
+
+👉 **适用场景**：仅需展示关联对象信息，无需写入。
+
+------
+
+**嵌套写入（create / update）**
+
+DRF 默认不支持嵌套写入，需要手动重写 `create()` 或 `update()`：
+
+```python
+class ProjectDemoSerializer(serializers.ModelSerializer):
+    owner = UserDemoSerializer()
+
+    class Meta:
+        model = ProjectDemo
+        fields = ["id", "name", "owner"]
+
+    def create(self, validated_data):
+        owner_data = validated_data.pop("owner")
+        owner = UserDemo.objects.create(**owner_data)
+        project = ProjectDemo.objects.create(owner=owner, **validated_data)
+        return project
+```
+
+👉 **适用场景**：创建或更新包含外键数据的对象（如创建项目时附带用户信息）。
+
+| 功能类型            | 方法                               | 常见用途                 |
+| ------------------- | ---------------------------------- | ------------------------ |
+| 字段重命名 / 格式化 | `to_representation()`              | 调整输出结构、重命名字段 |
+| 动态字段控制        | 自定义 `__init__`                  | 不同场景返回不同字段     |
+| 自定义字段          | `SerializerMethodField` / `source` | 统计、拼接、聚合数据     |
+| 嵌套序列化          | 嵌套子序列化器                     | 展示或写入关联对象       |
+
+
 
 ## 5. 视图 & 路由
 
