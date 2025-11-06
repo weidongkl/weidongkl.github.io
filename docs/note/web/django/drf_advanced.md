@@ -4,11 +4,22 @@ sidebar_position: 2
 
 # Django + DRF 开发进阶
 
-## 1. 分页与统一响应
+## 1. 分页
 
-### 1.1 自定义分页类
+### 1.1 默认分页
 
 ```python
+# settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+```
+
+### 1.2 自定义分页类
+
+```python
+# lib/pagination.py
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
@@ -28,14 +39,20 @@ class CustomPageNumberPagination(PageNumberPagination):
             },
         })
 ````
+在 `settings.py` 配置：
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'demo.pagination.CustomPageNumberPagination',
+}
+```
 
 ---
 
 ## 2. 统一响应结构
 
-在 `utils/response.py` 中定义：
-
 ```python
+# lib/response.py
 from rest_framework.response import Response
 
 def success(data=None, message="success"):
