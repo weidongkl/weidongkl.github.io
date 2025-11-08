@@ -38,6 +38,35 @@ class CustomPageNumberPagination(PageNumberPagination):
                 "list": data,
             },
         })
+    # 影响api文档显示。不加下面方法，生成的api文档，依旧是老格式。
+    def get_paginated_response_schema(self, schema):
+        return {
+            'type': 'object',
+            'properties': {
+                'code': {
+                    'type': 'integer',
+                    'example': 0
+                },
+                'message': {
+                    'type': 'string', 
+                    'example': 'success'
+                },
+                'data': {
+                    'type': 'object',
+                    'properties': {
+                        'total': {
+                            'type': 'integer',
+                            'example': 100
+                        },
+                        'page': {
+                            'type': 'integer', 
+                            'example': 1
+                        },
+                        'list': schema
+                    }
+                }
+            }
+        }
 ````
 在 `settings.py` 配置：
 
