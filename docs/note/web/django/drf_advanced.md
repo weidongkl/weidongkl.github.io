@@ -66,37 +66,222 @@ def fail(message="error", code=1):
 
 ## 3. 自动生成 API 文档
 
-### 3.1 使用 drf-spectacular
+django 通常有以下两种api文档生成库。
 
-在 `settings.py` 中配置：
+- **drf-yasg**：成熟、常用，Swagger UI / ReDoc 支持好。
+- **drf-spectacular**：基于 OpenAPI 3 标准，更现代，推荐新项目使用。
 
-```python
-REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-}
-SPECTACULAR_SETTINGS = {
-    "TITLE": "Demo API",
-    "DESCRIPTION": "Django + DRF 接口文档",
-    "VERSION": "1.0.0",
-}
+### 3.1 drf-yasg 方式
+
+**安装**
+
+```bash
+pip install drf-yasg
 ```
 
-在 `urls.py` 中添加：
+**配置**
 
 ```python
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-
-urlpatterns += [
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+# settings.py
+INSTALLED_APPS = [
+    ...
+    'drf_yasg',
+    ...,
 ]
 ```
 
-访问：
+**配置路由**
 
+在 `myproject/urls.py` 增加：
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from demo.views import UserDemoViewSet, ProjectDemoViewSet, TaskDemoViewSet
+from rest_framework.routers import DefaultRouter
+
+# API 路由
+router = DefaultRouter()
+router.register(r'users', UserDemoViewSet)
+router.register(r'projects', ProjectDemoViewSet)
+router.register(r'tasks', TaskDemoViewSet)
+
+# Swagger 配置
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Demo API",
+        default_version="v1",
+        description="Django + DRF Demo 项目 API 文档",
+        contact=openapi.Contact(email="dev@example.com"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
+
+    # Swagger & ReDoc
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name="schema-swagger-ui"),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name="schema-redoc"),
+]
 ```
-http://127.0.0.1:8000/api/docs/
+
+**效果**
+
+- Swagger UI: `http://127.0.0.1:8000/swagger/`
+- ReDoc: `http://127.0.0.1:8000/redoc/`
+
+API 会根据 **ViewSet + Serializer** 自动生成。
+
+### 3.2 drf-spectacular 方式
+
+**安装**
+
+```bash
+pip install drf-spectacular
 ```
+
+**配置**
+
+```python
+# settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Demo API',
+    'DESCRIPTION': 'Django + DRF Demo 项目 API 文档',
+    'VERSION': '1.0.0',
+}
+```
+
+**路由**
+
+```python
+# myproject/urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from demo.views import UserDemoViewSet, ProjectDemoViewSet, TaskDemoViewSet
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+router = DefaultRouter()
+router.register(r'users', UserDemoViewSet)
+router.register(r'projects', ProjectDemoViewSet)
+router.register(r'tasks', TaskDemoViewSet)
+
+urlpatterns = [
+    path('api/', include(router.urls)),
+
+    # OpenAPI schema
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+]
+```
+
+**效果**
+
+- OpenAPI JSON: `http://127.0.0.1:8000/api/schema/`
+- Swagger UI: `http://127.0.0.1:8000/api/schema/swagger-ui/`
+- ReDoc: `http://127.0.0.1:8000/api/schema/redoc/`
+
+**给 ViewSet 加注释**
+
+**参数**：用 `OpenApiParameter`。
+
+**请求体**：用 `request=Serializer`。
+
+**响应体**：用 `responses={code: Serializer}` 或 `OpenApiResponse`。
+
+**批量注释**： `@extend_schema_view`
+
+- 批量方式示例
+
+  ```python
+  from django.shortcuts import render
+  from .models import UserDemo, ProjectDemo, TaskDemo
+  from .serializers import UserDemoSerializer, ProjectDemoSerializer, TaskDemoSerializer
+  from rest_framework import viewsets
+  
+  # 用于生成OpenAPI schema
+  from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiResponse
+  
+  
+  @extend_schema_view(
+      list=extend_schema(
+          summary="获取用户列表",
+          parameters=[
+              OpenApiParameter(name="q", description="搜索关键字", required=False, type=str),
+          ],
+          responses={200: UserDemoSerializer(many=True)},
+      ),     
+      retrieve=extend_schema(
+          summary="获取单个用户",
+          responses={
+              200: OpenApiResponse(UserDemoSerializer, description="成功返回用户"),
+              404: OpenApiResponse(description="用户不存在"),
+          },
+      ),
+      create=extend_schema(
+          summary="创建新用户",
+          request=UserDemoSerializer,
+          responses={201: UserDemoSerializer},
+      ),    update=extend_schema(summary="更新用户"),
+      destroy=extend_schema(summary="删除用户"),
+  )
+  
+  
+  class UserDemoViewSet(viewsets.ModelViewSet):
+      queryset = UserDemo.objects.all()
+      serializer_class = UserDemoSerializer
+  ```
+
+- 单独的action示例
+
+  ```python
+  from django.shortcuts import render
+  from .models import UserDemo, ProjectDemo, TaskDemo
+  from .serializers import UserDemoSerializer, ProjectDemoSerializer, TaskDemoSerializer
+  from rest_framework import viewsets
+  
+  # 用于生成OpenAPI schema
+  from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiResponse
+  
+  class UserDemoViewSet(viewsets.ModelViewSet):
+      queryset = UserDemo.objects.all()
+      serializer_class = UserDemoSerializer
+      @extend_schema(
+          parameters=[
+              OpenApiParameter(name="active", description="是否激活用户", required=False, type=bool),
+          ],
+          responses={200: UserDemoSerializer(many=True)},
+      )
+      def list(self, request, *args, **kwargs):
+          return super().list(request, *args, **kwargs)
+  
+      @extend_schema(
+      responses={
+          200: OpenApiResponse(
+              response=UserDemoSerializer,
+              description="成功返回",
+              examples=[
+                  OpenApiExample(
+                      "示例用户",
+                      value={"id": 1, "username": "alice", "email": "alice@example.com"},
+                  )
+              ],
+          )
+      }
+  )
+      def retrieve(self, request, *args, **kwargs):
+          return super().retrieve(request, *args, **kwargs)
+  ```
 
 ---
 
