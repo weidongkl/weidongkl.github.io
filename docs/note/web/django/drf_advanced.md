@@ -354,6 +354,12 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+        #'rest_framework.permissions.AllowAny',  
+        # 如果不配置DEFAULT_PERMISSION_CLASSES
+        # 就使用默认的AllowAny。未认证的用户就是AnonymousUser
+    ),   
 }
 ```
 
