@@ -339,6 +339,12 @@ class ProjectDemoViewSet(viewsets.ModelViewSet):
 
 ## 5. 认证与权限控制
 
+常见认证方式
+
+- SessionAuthentication（适合后台管理）
+- TokenAuthentication（适合移动端 / API）
+- JWT Authentication（推荐，安全性更高）
+
 ### 5.1 JWT 认证
 
 安装：
@@ -372,6 +378,16 @@ urlpatterns += [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
+```
+
+获取token
+
+```bash
+POST /api/token/
+{
+  "username": "username",
+  "password": "password"
+}
 ```
 
 ---
