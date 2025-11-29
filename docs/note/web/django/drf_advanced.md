@@ -388,25 +388,67 @@ POST /api/token/
   "username": "username",
   "password": "password"
 }
+# response
+{
+  "refresh": "refresh_token",
+  "access": "access_token"
+}
+```
+
+访问受保护的api
+
+```bash
+GET /api/projects/
+header "authorization: Bearer acess_token"
 ```
 
 ---
 
-### 5.2 自定义权限
+### 5.2 权限
+
+#### 5.2.1 常见内置权限
 
 ```python
 from rest_framework import permissions
 
-class IsProjectOwner(permissions.BasePermission):
+class MyView(APIView):
+    permission_classes = [
+        permissions.AllowAny,                    # 允许所有请求
+        permissions.IsAuthenticated,             # 必须认证
+        permissions.IsAdminUser,                 # 必须是管理员
+        permissions.IsAuthenticatedOrReadOnly,   # 认证用户可写，其他只读
+        permissions.DjangoModelPermissions,      # 基于 Django 模型权限
+        permissions.DjangoModelPermissionsOrAnonReadOnly,  # 匿名只读
+        permissions.DjangoObjectPermissions,     # 基于对象的权限
+    ]
+```
+
+#### 5.2.2 自定义权限
+
+```python
+from rest_framework import permissions
+class CustomPermission(permissions.BasePermission):  
+    # created, list, retrieve, update, partial_update, destroy
+    def has_permission(self, request, view):
+        # print(view.__class__.__name__) # 打印视图类名称,如UserDemoViewSet
+        # 必须认证且是活跃用户
+        return request.user and request.user.is_authenticated and request.user.is_active
+    
+    # retrieve, update, partial_update, destroy 包含对象级别权限检查,包含path_id
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
+        # print(view.__class__.__name__)  # 打印视图类名称,如UserDemoViewSet
+        # print(f"Object: {obj}") #视图类对应模型的一个实例，如UserDemo对象
+        # 对象级别权限检查
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return  request.user.is_staff
 ```
 
 应用到 ViewSet：
 
 ```python
 class ProjectDemoViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsProjectOwner]
+    permission_classes = [CustomPermission]
 ```
 
 ---
