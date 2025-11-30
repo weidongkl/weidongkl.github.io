@@ -2,8 +2,9 @@
 sidebar_position: 1
 ---
 
+# Django + DRF 基础
 
-# Django + DRF 开发基础
+[示例代码](https://github.com/weidongkl/doc/tree/main/web/django/myproject)
 
 ## 1. 概述与环境搭建
 

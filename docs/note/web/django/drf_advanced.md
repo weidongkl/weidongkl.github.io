@@ -2,7 +2,9 @@
 sidebar_position: 2
 ---
 
-# Django + DRF 开发进阶
+# Django + DRF 进阶
+
+[示例代码](https://github.com/weidongkl/doc/tree/main/web/django/myproject)
 
 ## 1. 分页
 
@@ -455,25 +457,86 @@ class ProjectDemoViewSet(viewsets.ModelViewSet):
 
 ## 6. 中间件与性能优化
 
-### 6.1 自定义请求日志中间件
+### 6.1 简介
+
+**Middleware**（中间件）是 Django 在 **请求和响应处理流程** 中间插入的钩子函数。
+
+常见用途：
+
+- 认证与权限检查
+- 请求日志
+- 性能监控（耗时统计）
+- 异常处理
+- CORS 处理
+
+### 6.2 Middleware 生命周期
+
+1. **请求阶段**：`__call__` → `process_view`
+2. **视图处理**：执行 View
+3. **响应阶段**：`process_exception`（如有异常）→ `process_template_response` → 返回 Response
+
+### 6.3 自定义请求中间件
 
 ```python
-class RequestLogMiddleware:
+import time
+from django.utils.deprecation import MiddlewareMixin
+
+class RequestLogMiddleware(MiddlewareMixin):
+    #  旧写法
+    # def process_request(self, request):
+    #     request.start_time = time.time()
+    #     print(f"请求开始: {request.method} {request.path}")
+
+    # def process_response(self, request, response):
+    #     duration = time.time() - getattr(request, 'start_time', time.time())
+    #     print(f"请求结束: {request.method} {request.path} 用时 {duration:.2f}s")
+    #     return response
+
+    # 新写法
     def __init__(self, get_response):
         self.get_response = get_response
+        print("RequestLogMiddleware __init__") # 服务启动时打印一次
+        # 一次性配置和初始化
 
     def __call__(self, request):
-        import time
-        start = time.time()
+        # 在每个请求上调用视图之前执行
+        print(f"Processing request: {request.path}")
+        
+        # 可以修改请求对象
+        request.custom_attribute = "custom_value"
+        
         response = self.get_response(request)
-        duration = time.time() - start
-        print(f"{request.method} {request.path} 用时 {duration:.2f}s")
+        
+        # 在每个响应返回给客户端之前执行
+        print(f"Returning response for: {request.path}")
+        
+        # 可以修改响应对象
+        response['X-Custom-Header'] = 'Custom Value'
+        
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        # 在调用视图之前，但在URL解析之后执行,在 self.get_response(request)中调用
+        print(f"About to call view: {view_func.__name__}")
+        # 如果返回 HttpResponse，将跳过视图
+        return None
+
+    def process_exception(self, request, exception):
+        # 当视图抛出异常时调用，,在 self.get_response(request)中调用。
+        # 顺序 process_view ->  process_exception
+        print(f"Exception occurred: {exception}")
+        # 可以返回自定义响应
+        return None
+
+    def process_template_response(self, request, response):
+        # 如果响应有 render() 方法（如TemplateResponse）时调用
+        print("Processing template response")
         return response
 ```
 
 ---
 
-### 6.2 缓存与优化建议
+### 6.4 缓存与优化建议
 
 | 场景     | 推荐方案                                     |
 | ------ | ---------------------------------------- |
