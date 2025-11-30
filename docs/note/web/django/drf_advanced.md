@@ -546,7 +546,77 @@ class RequestLogMiddleware(MiddlewareMixin):
 
 ---
 
-## 7. 附录：最佳实践清单
+## 7. DRF Exception Handler
+
+### 7.1 作用
+
+- DRF 提供了全局异常处理函数 `EXCEPTION_HANDLER`，用于将 **Python 异常 → DRF Response**。
+- 默认行为：常见异常（如 `ValidationError`, `PermissionDenied`）会返回 JSON 格式响应。
+
+### 7.2 自定义 Exception Handler
+
+```python
+# lib/exception.py
+from rest_framework.views import exception_handler
+from rest_framework.response import Response
+
+def custom_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        return Response({
+            "code": response.status_code,
+            "message": response.data.get("detail", "error"),
+            "data": None
+        }, status=response.status_code)
+
+    # 未处理的异常
+    return Response({
+        "code": 500,
+        "message": str(exc),
+        "data": None
+    }, status=500)
+```
+
+在 `settings.py` 配置：
+
+```python
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'lib.exception.custom_exception_handler'
+}
+```
+
+### 7.3 效果
+
+请求参数错误：
+
+```http
+POST /api/users/
+{}
+```
+
+返回：
+
+```json
+{
+  "code": 400,
+  "message": "This field is required.",
+  "data": null
+}
+```
+
+服务器错误：
+
+```json
+{
+  "code": 500,
+  "message": "division by zero",
+  "data": null
+}
+```
+
+
+## 8. 附录：最佳实践清单
 
 * **模型层**
 
