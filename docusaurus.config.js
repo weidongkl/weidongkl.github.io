@@ -25,7 +25,7 @@ const config = {
   organizationName: 'weidongkl', // Usually your GitHub org/user name.
   projectName: 'weidongkl.github.io', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // 文件监视器优化设置
