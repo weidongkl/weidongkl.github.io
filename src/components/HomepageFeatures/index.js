@@ -32,7 +32,7 @@ export default function HomepageFeatures() {
                             </Translate>
                         </p>
                         <Link
-                            to="/docs/category/os"
+                            to="/docs/category/design"
                         >
                             <Translate id="homepage.viewNotes">📚 查看全部笔记</Translate>
                         </Link>
