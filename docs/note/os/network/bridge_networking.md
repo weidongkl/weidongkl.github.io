@@ -336,6 +336,9 @@ ip link set veth2-br master br-demo
 
 ip link set veth1-br up
 ip link set veth2-br up
+
+ip netns exec ns1 ip link set lo up
+ip netns exec ns2 ip link set lo up
 ```
 
 ### Step 4：配置 IP
