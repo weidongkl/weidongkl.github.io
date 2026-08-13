@@ -32,9 +32,9 @@ export default function HomepageFeatures() {
                             </Translate>
                         </p>
                         <Link
-                            to="/docs/category/design"
+                            to="/blog"
                         >
-                            <Translate id="homepage.viewNotes">📚 查看全部笔记</Translate>
+                            <Translate id="homepage.viewBlog">查看博客</Translate>
                         </Link>
                         {/*<div className="bg-gray-100 p-4 rounded-xl shadow-md mt-6 w-full max-w-xl">*/}
                         {/*    <h3 className="text-2xl mb-2">📌 最近更新</h3>*/}

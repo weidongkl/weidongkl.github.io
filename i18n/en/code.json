@@ -369,8 +369,8 @@
     "message": "At the same time, the process of writing can inspire new thinking and make growth clearly visible.",
     "description": "The second part of the description text on the homepage"
   },
-  "homepage.viewNotes": {
-    "message": "📚 View All Notes",
-    "description": "The link text to view all notes"
+  "homepage.viewBlog": {
+    "message": "View Blog",
+    "description": "The link text to view the blog"
   }
 }
